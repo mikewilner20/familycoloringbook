@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ProjectStatus {
+  PENDING
+  PROCESSING
+  READY
+  PAID
+}
+
+enum AssetStatus {
+  UPLOADING
+  PROCESSING
+  READY
+  FAILED
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  SHIPPED
+}
+
+model User {
+  id        String    @id
+  email     String    @unique
+  name      String
+  projects  Project[]
+  createdAt DateTime  @default(now())
+}
+
+model Project {
+  id             String        @id @default(uuid())
+  title          String
+  status         ProjectStatus
+  userId         String
+  user           User          @relation(fields: [userId], references: [id])
+  assets         Asset[]
+  orders         Order[]
+  interiorPdfKey String?
+  createdAt      DateTime      @default(now())
+}
+
+model Asset {
+  id          String      @id
+  projectId   String
+  project     Project     @relation(fields: [projectId], references: [id])
+  originalKey String
+  lineArtKey  String?
+  status      AssetStatus
+  createdAt   DateTime    @default(now())
+}
+
+model Order {
+  id                String       @id @default(uuid())
+  projectId         String       @unique
+  project           Project      @relation(fields: [projectId], references: [id])
+  checkoutSessionId String?
+  printOrderId      String?
+  provider          String?
+  status            OrderStatus
+  amount            Int
+  currency          String
+  createdAt         DateTime     @default(now())
+}
