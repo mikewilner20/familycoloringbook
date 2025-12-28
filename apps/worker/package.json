@@ -1,0 +1,13 @@
+{
+  "name": "worker",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "@family/core": "workspace:*",
+    "tslib": "2.6.2"
+  }
+}
